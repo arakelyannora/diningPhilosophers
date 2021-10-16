@@ -6,7 +6,7 @@
 /*   By: nora <nora@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/09 10:03:10 by nora              #+#    #+#             */
-/*   Updated: 2021/10/16 11:29:27 by nora             ###   ########.fr       */
+/*   Updated: 2021/10/16 11:51:58 by nora             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,9 +55,11 @@ int	init_mutexs(t_info *info)
 int	continue_init(t_info *info, t_philo *philos)
 {
 	int		i;
+	int		res;
 	t_time	time;
 
 	i = 0;
+	res = SUCCESS;
 	if (gettimeofday(&time, NULL))
 		return (GETTIME);
 	philos = malloc(sizeof(t_philo) * info->params.num_of_philos);
@@ -66,13 +68,15 @@ int	continue_init(t_info *info, t_philo *philos)
 	if (!philos || !info->forks)
 	{
 		free_(philos, info->forks);
-		return (MALLOC_ERROR);
+		return (error(MALLOC_ERROR));
 	}
 	init_philosophers(info, time);
-	init_mutexs(info);
+	res = init_mutexs(info);
+	if (res)
+		errors(res);
 	free(philos);
 	free(info->forks);
-	return (SUCCESS);
+	return (res);
 }
 
 int	init(t_info *info, t_philo *philos, int argc, char **argv)
@@ -87,8 +91,7 @@ int	init(t_info *info, t_philo *philos, int argc, char **argv)
 		info->params.tot_meals_num = string_to_int(argv[5]);
 		if (info->params.tot_meals_num == NEG_PARAM)
 		{
-			errors(NEG_PARAM);
-			return (FAIL);
+			return (errors(NEG_PARAM));
 		}
 	}
 	if (info->params.num_of_philos == NEG_PARAM
@@ -96,9 +99,7 @@ int	init(t_info *info, t_philo *philos, int argc, char **argv)
 		|| info->params.time_to_eat == NEG_PARAM
 		|| info->params.time_to_sleep == NEG_PARAM)
 	{
-		errors(NEG_PARAM);
-		return (FAIL);
+		return (errors(NEG_PARAM));
 	}
-	continue_init(info, philos);
-	return (SUCCESS);
+	return (continue_init(info, philos));
 }

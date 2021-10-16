@@ -6,7 +6,7 @@
 /*   By: nora <nora@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/06 23:06:07 by nora              #+#    #+#             */
-/*   Updated: 2021/10/16 11:30:22 by nora             ###   ########.fr       */
+/*   Updated: 2021/10/16 11:38:58 by nora             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ typedef struct s_info
 	t_params		params;
 }	t_info;
 
-void	errors(int error_number);
+int		errors(int error_number);
 int		init(t_info *info, t_philo *philos, int argc, char **argv);
 int		start(t_info *info, int argc, char **argv);
 int		t_isdigit(int arg);

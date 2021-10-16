@@ -6,7 +6,7 @@
 /*   By: nora <nora@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/09 10:02:54 by nora              #+#    #+#             */
-/*   Updated: 2021/10/16 10:21:31 by nora             ###   ########.fr       */
+/*   Updated: 2021/10/16 11:39:39 by nora             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,11 +28,11 @@ int	main(int argc, char **argv)
 
 	if (argc == 5 || argc == 6)
 	{
-		if (start(&info, argc, argv) == FAIL)
-			return (SUCCESS);
+		if (start(&info, argc, argv) != SUCCESS)
+			return (FAIL);
 		print(&(info.params));
+		return (SUCCESS);
 	}
 	else
-		errors(WRONG_PARAMS_NUMBER);
-	return (SUCCESS);
+		return (errors(WRONG_PARAMS_NUMBER));
 }

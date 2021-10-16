@@ -6,13 +6,13 @@
 /*   By: nora <nora@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 23:29:31 by nora              #+#    #+#             */
-/*   Updated: 2021/10/16 11:32:16 by nora             ###   ########.fr       */
+/*   Updated: 2021/10/16 11:46:55 by nora             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
-void	errors(int error_number)
+int	errors(int error_number)
 {
 	if (error_number == WRONG_PARAMS_NUMBER)
 	{
@@ -27,5 +27,8 @@ void	errors(int error_number)
 	else if (error_number == MALLOC_ERROR)
 		printf("Malloc error\n");
 	else if (error_number == MUTEX_DESTROY_FAIL)
-		print("Failed to destroy mutex\n");
+		printf("Failed to destroy mutex\n");
+	else if (error_number == GETTIME)
+		printf("Failed to get time");
+	return (FAIL);
 }
