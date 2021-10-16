@@ -6,94 +6,99 @@
 /*   By: nora <nora@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/09 10:03:10 by nora              #+#    #+#             */
-/*   Updated: 2021/10/11 21:40:58 by nora             ###   ########.fr       */
+/*   Updated: 2021/10/16 11:29:27 by nora             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philosophers.h"
 
-int	ft_isdigit(int arg)
+void	init_philosophers(t_info *info, t_time time)
 {
-	if (arg >= '0' && arg <= '9')
-		return (1);
-	return (0);
-}
-
-size_t	ft_strlen(const char *s)
-{
-	size_t	length;
-
-	length = 0;
-	while (*s)
-	{
-		length++;
-		s++;
-	}
-	return (length);
-}
-
-int	string_to_int(char *str)
-{
-	int	num;
-
-	num = 0;
-	if (ft_strlen(str) > 10)
-		return (NEG_PARAM);
-	while (*str)
-	{
-		if (!(ft_isdigit(*str)) || (num == 214748364 && (*str) - 48 > 7))
-			return (NEG_PARAM);
-		num = num * 10 + ((*str) - 48);
-		str++;
-	}
-	return (num);
-}
-
-int	init_thread_mutex(t_params *params)
-{
-	int	i;
-	int	num;
+	int		i;
+	t_philo	*philo;
 
 	i = 0;
-	num = params->num_of_philos;
-	if (params->num_of_philos == 1)
-		num = 2;
-	while (i < num)
+	while (i < info->params.num_of_philos)
 	{
-		if (pthread_mutex_init(&params->mutexs->fork[i], NULL))
-		{
-			errors(MUTEX_INIT_FAIL);
-			return (FAIL);
-		}
-	}
-	while (i < params->num_of_philos)
-	{
+		philo = &(info->philos[i]);
+		philo->left_fork = i;
+		philo->right_fork = (i + 1) % info->params.num_of_philos;
+		philo->state = THINKING;
+		philo->start = time;
+		philo->last_meal = time;
+		philo->tot_meals = 0;
+		i++;
 	}
 }
 
-int	init(t_params *param, int argc, char **argv)
+int	init_mutexs(t_info *info)
 {
-	param->num_of_philos = string_to_int(argv[1]);
-	param->time_to_die = string_to_int(argv[2]);
-	param->time_to_eat = string_to_int(argv[3]);
-	param->time_to_sleep = string_to_int(argv[4]);
+	int	i;
+
+	i = 0;
+	while (i < info->params.num_of_philos)
+	{
+		if (pthread_mutex_init(&(info->forks[i]), NULL))
+		{
+			return (destroy_forks_mutexs(i, info));
+			return (MUTEX_INIT_FAIL);
+		}
+		i++;
+	}
+	if (pthread_mutex_init(info->common_mutex, NULL))
+	{
+		return (MUTEX_INIT_FAIL);
+	}
+	return (SUCCESS);
+}
+
+int	continue_init(t_info *info, t_philo *philos)
+{
+	int		i;
+	t_time	time;
+
+	i = 0;
+	if (gettimeofday(&time, NULL))
+		return (GETTIME);
+	philos = malloc(sizeof(t_philo) * info->params.num_of_philos);
+	info->forks = malloc(sizeof(pthread_mutex_t) * info->params.num_of_philos);
+	info->philos = philos;
+	if (!philos || !info->forks)
+	{
+		free_(philos, info->forks);
+		return (MALLOC_ERROR);
+	}
+	init_philosophers(info, time);
+	init_mutexs(info);
+	free(philos);
+	free(info->forks);
+	return (SUCCESS);
+}
+
+int	init(t_info *info, t_philo *philos, int argc, char **argv)
+{
+	info->params.num_of_philos = string_to_int(argv[1]);
+	info->params.time_to_die = string_to_int(argv[2]);
+	info->params.time_to_eat = string_to_int(argv[3]);
+	info->params.time_to_sleep = string_to_int(argv[4]);
+	info->params.tot_meals_num = -1;
 	if (argc == 6)
 	{
-		param->tot_meals_num = string_to_int(argv[5]);
-		if (param->tot_meals_num == NEG_PARAM)
+		info->params.tot_meals_num = string_to_int(argv[5]);
+		if (info->params.tot_meals_num == NEG_PARAM)
 		{
 			errors(NEG_PARAM);
 			return (FAIL);
 		}
 	}
-	else
-		param->tot_meals_num = -1;
-	if (param->num_of_philos == NEG_PARAM || param->time_to_die == NEG_PARAM
-		|| param->time_to_eat == NEG_PARAM || param->time_to_sleep == NEG_PARAM)
+	if (info->params.num_of_philos == NEG_PARAM
+		|| info->params.time_to_die == NEG_PARAM
+		|| info->params.time_to_eat == NEG_PARAM
+		|| info->params.time_to_sleep == NEG_PARAM)
 	{
 		errors(NEG_PARAM);
 		return (FAIL);
 	}
+	continue_init(info, philos);
 	return (SUCCESS);
-	//init_thread_mutex(param);
 }

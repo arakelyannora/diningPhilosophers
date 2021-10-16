@@ -6,7 +6,7 @@
 /*   By: nora <nora@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/07 23:29:31 by nora              #+#    #+#             */
-/*   Updated: 2021/10/11 21:39:37 by nora             ###   ########.fr       */
+/*   Updated: 2021/10/16 11:32:16 by nora             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,4 +24,8 @@ void	errors(int error_number)
 		printf("Mutex initialization has failed\n");
 	else if (error_number == NEG_PARAM)
 		printf("Parameters can't be negative numbers\n");
+	else if (error_number == MALLOC_ERROR)
+		printf("Malloc error\n");
+	else if (error_number == MUTEX_DESTROY_FAIL)
+		print("Failed to destroy mutex\n");
 }

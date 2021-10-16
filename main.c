@@ -6,7 +6,7 @@
 /*   By: nora <nora@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/10/09 10:02:54 by nora              #+#    #+#             */
-/*   Updated: 2021/10/11 21:41:42 by nora             ###   ########.fr       */
+/*   Updated: 2021/10/16 10:21:31 by nora             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,15 +24,13 @@ void	print(t_params *param)
 
 int	main(int argc, char **argv)
 {
-	t_params	param;
+	t_info	info;
 
 	if (argc == 5 || argc == 6)
 	{
-		// if (init(&param, argc, argv) == FAIL)
-		// 	return (SUCCESS);
-		if (start(&param, argc, argv) == FAIL)
+		if (start(&info, argc, argv) == FAIL)
 			return (SUCCESS);
-		print(&param);
+		print(&(info.params));
 	}
 	else
 		errors(WRONG_PARAMS_NUMBER);
